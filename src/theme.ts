@@ -4,13 +4,21 @@ import { createTheme } from '@mui/material';
 export default createTheme({
     components: {
         MuiButton: {
+            defaultProps: {
+                variant: 'outlined',
+            },
             styleOverrides: {
-                root: {
+                outlined: {
                     border: '2px dashed #FFFFFF',
                     padding: '16px 24px',
                     '&:hover': {
                         backgroundColor: 'rgba(255, 255, 255, 0.2)',
                     },
+                },
+                sizeLarge: {
+                    borderRadius: 24,
+                    fontSize: 20,
+                    padding: '24px 32px',
                 },
             },
         },

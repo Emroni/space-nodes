@@ -1,19 +1,28 @@
 import { Joystick } from '@/components';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
+import { Component } from 'react';
 
-export default function Player() {
+export default class Player extends Component {
 
-    function handleJoystickChange(amount: number, angle: number) {
+    handleJoystickChange = (amount: number, angle: number) => {
         console.log(amount, angle);
     }
 
-    return <Box display="flex" gap="20vw" height="100%" justifyContent="space-between" sx={{ touchAction: 'none' }}>
-        <Box flex={1}>
-            <Joystick onChange={handleJoystickChange} />
-        </Box>
-        <Box flex={1}>
-            Buttons
-        </Box>
-    </Box>;
+    handleShoot = () => {
+        console.log('shoot');
+    }
+
+    render() {
+        return <Box display="flex" gap="20vw" height="100%" justifyContent="space-between">
+            <Box flex={1} sx={{ touchAction: 'none' }}>
+                <Joystick onChange={this.handleJoystickChange} />
+            </Box>
+            <Box alignItems="center" display="flex" flex={1} flexDirection="column" justifyContent="center">
+                <Button size="large" variant="contained" onClick={this.handleShoot}>
+                    Shoot
+                </Button>
+            </Box>
+        </Box>;
+    }
 
 }

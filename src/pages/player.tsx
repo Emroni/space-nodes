@@ -16,6 +16,9 @@ class Player extends Component<any, any> {
 
     componentDidMount() {
         this.reset();
+        
+        this.props.socket.emit('playerConnect');
+        
         this.timer = setInterval(this.move, 1000 / 30);
     }
 
@@ -30,7 +33,9 @@ class Player extends Component<any, any> {
 
         // Push to server
         if (angle) {
-            this.props.socket.emit('player.angle', angle);
+            this.props.socket.emit('playerMove', {
+                angle,
+            });
         }
     }
 
@@ -39,11 +44,19 @@ class Player extends Component<any, any> {
     }
 
     reset = () => {
+        // Reset values
         this.angle = 0;
         this.velocityX = 0;
         this.velocityY = 0;
         this.x = 0;
         this.y = 0;
+        
+        // Push to server
+        this.props.socket.emit('playerMove', {
+            angle: this.angle,
+            x: this.x,
+            y: this.y,
+        });
     }
 
     move = () => {
@@ -64,7 +77,7 @@ class Player extends Component<any, any> {
         if (this.x != x || this.y != y) {
             this.x = x;
             this.y = y;
-            this.props.socket.emit('player.position', {
+            this.props.socket.emit('playerMove', {
                 x: this.x,
                 y: this.y,
             });

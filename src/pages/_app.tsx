@@ -6,7 +6,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
     return <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Box component="main" padding={4}>
+        <Box component="main" minHeight="100vh" padding={4} sx={{ backgroundImage: 'url(/assets/space.png)' }}>
             <Component {...pageProps} />
         </Box>
     </ThemeProvider>;

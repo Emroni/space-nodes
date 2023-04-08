@@ -1,29 +1,26 @@
-import { Box } from '@mui/material';
+import { Typography } from '@mui/material';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 
 export default function Home() {
 
-    const [status, setStatus] = useState('');
+    const [connected, setConnected] = useState(false);
 
     useEffect(() => {
         let socket: Socket;
-        setStatus('Fetching');
 
         fetch('/api/server').then(() => {
-            setStatus('Connecting');
-
             socket = io(`${window.location.hostname}:${process.env.NEXT_PUBLIC_SOCKET_PORT}`, {
                 transports: ['websocket'],
             });
 
             socket.on('connect', () => {
-                setStatus('Connected to server');
+                setConnected(true);
             });
 
             socket.on('disconnect', () => {
-                setStatus('Disconnected from server');
+                setConnected(false);
             });
         });
 
@@ -36,9 +33,14 @@ export default function Home() {
         <Head>
             <title>Space Nodes</title>
         </Head>
-        <Box>
-            {status}
-        </Box>
+        <Typography align="center" color="primary" component="h1" fontSize={40} textTransform="uppercase">
+            Space Nodes
+        </Typography>
+        {!connected && (
+            <Typography align="center">
+                Connecting
+            </Typography>
+        )}
     </>;
 
 }

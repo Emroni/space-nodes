@@ -6,5 +6,6 @@ interface SocketProviderProps {
 
 interface SocketState {
     connected: boolean;
+    emit(type: string, data: any): void;
     on(type: string, listener: SocketListener): void;
 }

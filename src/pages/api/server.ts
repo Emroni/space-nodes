@@ -13,6 +13,14 @@ export default function handler(_req: NextApiRequest, res: NextApiResponse) {
             socket.on('disconnect', () => {
                 console.log(`Socket ${socket.id} connected`);
             });
+
+            socket.on('player.angle', angle => {
+                console.log(`Angle ${socket.id} ${angle}`);
+            });
+
+            socket.on('player.position', ({ x, y }) => {
+                console.log(`Position ${socket.id} ${x}, ${y}`);
+            });
         });
 
         if (process.env.NEXT_PUBLIC_SOCKET_PORT) {

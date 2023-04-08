@@ -8,6 +8,16 @@ const SocketContext = createContext<SocketState>({} as SocketState);
 
 export const useSocket = () => useContext(SocketContext);
 
+export function withSocket(WrappedComponent: any) {
+    return function SocketWrappedComponent(props: any) {
+        return <SocketContext.Consumer>
+            {state => (
+                <WrappedComponent {...props} socket={state} />
+            )}
+        </SocketContext.Consumer>;
+    }
+}
+
 export default function SocketProvider({ children }: SocketProviderProps) {
 
     const [connected, setConnected] = useState(false);
@@ -40,6 +50,7 @@ export default function SocketProvider({ children }: SocketProviderProps) {
 
     const state = {
         connected,
+        emit: (type: string, data: any) => socket?.emit(type, data),
         on: (type: string, listener: SocketListener) => socket?.on(type, listener),
     };
 

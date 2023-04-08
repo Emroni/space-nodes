@@ -1,10 +1,17 @@
 import { useSocket } from '@/contexts/Socket/Socket';
 import { Typography } from '@mui/material';
 import Head from 'next/head';
+import { useEffect } from 'react';
 
 export default function Home() {
 
     const socket = useSocket();
+
+    useEffect(() => {
+        socket.on('disconnect', () => {
+            console.log('Disconnected');
+        });
+    });
 
     return <>
         <Head>

@@ -3,7 +3,7 @@ import { Server } from 'socket.io';
 
 let io: Server;
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(_req: NextApiRequest, res: NextApiResponse) {
     if (!io) {
         io = new Server((res.socket as any).server);
 

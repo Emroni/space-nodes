@@ -1,7 +1,8 @@
-import { Typography } from '@mui/material';
-import Head from 'next/head';
 import { createContext, useContext, useEffect, useState } from 'react';
 import io, { Socket as SocketClient } from 'socket.io-client';
+
+let connecting = false;
+let socket: SocketClient;
 
 const SocketContext = createContext<SocketState>({} as SocketState);
 
@@ -12,30 +13,34 @@ export default function SocketProvider({ children }: SocketProviderProps) {
     const [connected, setConnected] = useState(false);
 
     useEffect(() => {
-        let socket: SocketClient;
+        if (!connecting && !socket) {
+            connecting = true;
+            
+            fetch('/api/server').then(() => {
+                socket = io(`${window.location.hostname}:${process.env.NEXT_PUBLIC_SOCKET_PORT}`, {
+                    transports: ['websocket'],
+                });
 
-        fetch('/api/server').then(() => {
-            socket = io(`${window.location.hostname}:${process.env.NEXT_PUBLIC_SOCKET_PORT}`, {
-                transports: ['websocket'],
-            });
+                socket.on('connect', () => {
+                    console.log('Connected', socket.id)
+                    setConnected(true);
+                });
 
-            socket.on('connect', () => {
-                setConnected(true);
+                socket.on('disconnect', () => {
+                    console.log('Disconnected', socket.id)
+                    setConnected(false);
+                });
             });
-
-            socket.on('disconnect', () => {
-                setConnected(false);
-            });
-        });
+        }
 
         return () => {
             socket?.disconnect();
         };
-    }, [])
-
+    }, []);
 
     const state = {
         connected,
+        on: (type: string, listener: SocketListener) => socket?.on(type, listener),
     };
 
     return <SocketContext.Provider value={state}>

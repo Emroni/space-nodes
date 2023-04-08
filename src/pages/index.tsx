@@ -1,17 +1,11 @@
 import { useSocket } from '@/contexts/Socket/Socket';
-import { Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import Head from 'next/head';
-import { useEffect } from 'react';
+import NextLink from 'next/link';
 
 export default function Home() {
 
     const socket = useSocket();
-
-    useEffect(() => {
-        socket.on('disconnect', () => {
-            console.log('Disconnected');
-        });
-    });
 
     return <>
         <Head>
@@ -25,6 +19,14 @@ export default function Home() {
                 Connecting
             </Typography>
         )}
+        <Box display="flex" gap={3} justifyContent="center" marginTop={5}>
+            <Button href="/player" LinkComponent={NextLink}>
+                Player
+            </Button>
+            <Button href="/display" LinkComponent={NextLink}>
+                Display
+            </Button>
+        </Box>
     </>;
 
 }

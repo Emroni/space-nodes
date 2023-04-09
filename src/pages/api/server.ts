@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { Server, Socket } from 'socket.io';
 
 let io: Server;
+const bullets: any[] = [];
 const displays: Socket[] = [];
 const players: any = {};
 
@@ -20,10 +21,11 @@ export default function handler(_req: NextApiRequest, res: NextApiResponse) {
             socket.on('displayConnect', () => displayConnect(socket));
             socket.on('playerConnect', () => playerConnect(socket));
             socket.on('playerMove', (data: any) => playerMove(socket, data));
+            socket.on('playerShoot', (data: any) => playerShoot(socket, data));
         });
 
         // Set timer
-        setInterval(displayTick, 1000 / 30);
+        setInterval(tick, 1000 / 30);
     }
 
     res.end();
@@ -48,17 +50,7 @@ function disconnect(socket: Socket) {
 function displayConnect(socket: Socket) {
     console.log(`Display ${socket.id} connected`);
     displays.push(socket);
-    socket.emit('displayConnected', {
-        players,
-    });
-}
-
-function displayTick() {
-    displays.forEach(socket => {
-        socket.emit('displayTick', {
-            players,
-        });
-    });
+    tick();
 }
 
 function playerConnect(socket: Socket) {
@@ -77,4 +69,27 @@ function playerMove(socket: Socket, data: any) {
     player.angle = data.angle;
     player.x = data.x;
     player.y = data.y;
+}
+
+function playerShoot(socket: Socket, data: any) {
+    bullets.push({
+        ...data,
+        playerId: socket.id,
+    });
+}
+
+function tick() {
+    // Update bullets
+    bullets.forEach(bullet => {
+        bullet.x += bullet.velocityX;
+        bullet.y += bullet.velocityY;
+    });
+
+    // Push to displays
+    displays.forEach(socket => {
+        socket.emit('displayTick', {
+            bullets,
+            players,
+        });
+    });
 }

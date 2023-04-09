@@ -41,7 +41,13 @@ class Player extends Component<any, any> {
     }
 
     handleShoot = () => {
-        console.log('shoot');
+        this.props.socket.emit('playerShoot', {
+            angle: this.angle,
+            velocityX: 0.005 * Math.sin(this.angle + Math.PI / 2),
+            velocityY: 0.005 * Math.cos(this.angle - Math.PI / 2),
+            x: this.x,
+            y: this.y,
+        });
     }
 
     move = () => {

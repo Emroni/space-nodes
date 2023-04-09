@@ -7,6 +7,7 @@ class Display extends Component<any, any> {
     connected = false;
 
     state = {
+        bullets: [] as any[],
         players: [] as any[],
     };
 
@@ -20,19 +21,29 @@ class Display extends Component<any, any> {
     }
 
     init = (data: any) => {
-        this.setState({
-            players: Object.values(data.players),
-        });
+        this.tick(data);
     }
 
     tick = (data: any) => {
         this.setState({
+            bullets: data.bullets,
             players: Object.values(data.players),
         });
     }
 
     render() {
         return <Box height="100%" left={0} overflow="hidden" position="absolute" top={0} width="100%">
+            {this.state.bullets.map((bullet, index) => (
+                <Box key={index} sx={{
+                    backgroundColor: '#FF0000',
+                    height: '2px',
+                    left: `${100 * bullet.x}%`,
+                    position: 'absolute',
+                    top: `${100 * bullet.y}%`,
+                    transform: `rotate(${bullet.angle}rad)`,
+                    width: '6px',
+                }} />
+            ))}
             {this.state.players.map(player => (
                 <Box key={player.id} sx={{
                     backgroundColor: '#FFFFFF',

@@ -8,34 +8,36 @@ class Player extends Component<any, any> {
     timer: NodeJS.Timer;
 
     angle = 0;
+    connected = false;
     force = 0;
     velocityX = 0;
     velocityY = 0;
     x = 0;
     y = 0;
 
-    componentDidMount() {
-        this.reset();
-        
-        this.props.socket.emit('playerConnect');
-        
-        this.timer = setInterval(this.move, 1000 / 30);
+    componentDidUpdate() {
+        if (!this.connected && this.props.socket.connected) {
+            this.connected = true;
+            this.props.socket.emit('playerConnect');
+            this.props.socket.on('playerConnected', this.init);
+        }
     }
 
     componentWillUnmount() {
         clearInterval(this.timer);
     }
 
+    init = () => {
+        this.reset();
+        this.timer = setInterval(this.move, 1000 / 30);
+    }
+
     handleJoystickChange = (amount: number, angle: number) => {
         // Update values
         this.angle = angle;
         this.force = amount;
-
-        // Push to server
         if (angle) {
-            this.props.socket.emit('playerMove', {
-                angle,
-            });
+            this.update();
         }
     }
 
@@ -48,15 +50,9 @@ class Player extends Component<any, any> {
         this.angle = 0;
         this.velocityX = 0;
         this.velocityY = 0;
-        this.x = 0;
-        this.y = 0;
-        
-        // Push to server
-        this.props.socket.emit('playerMove', {
-            angle: this.angle,
-            x: this.x,
-            y: this.y,
-        });
+        this.x = 0.5;
+        this.y = 0.5;
+        this.update();
     }
 
     move = () => {
@@ -77,11 +73,16 @@ class Player extends Component<any, any> {
         if (this.x != x || this.y != y) {
             this.x = x;
             this.y = y;
-            this.props.socket.emit('playerMove', {
-                x: this.x,
-                y: this.y,
-            });
+            this.update();
         }
+    }
+
+    update = () => {
+        this.props.socket.emit('playerMove', {
+            angle: this.angle,
+            x: this.x,
+            y: this.y,
+        });
     }
 
     render() {

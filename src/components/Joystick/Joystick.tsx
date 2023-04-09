@@ -52,7 +52,7 @@ export default function Joystick({ onChange }: JoystickProps) {
         // Reset position
         setLeft(0);
         setTop(0);
-        onChange(0, 0);
+        onChange(0);
     }
 
     return <Box paddingBottom="100%" position="relative" ref={containerRef} onTouchEnd={handleTouchEnd} onTouchMove={handleTouchMove} onTouchStart={handleTouchMove}>

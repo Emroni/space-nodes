@@ -12,8 +12,8 @@ class Player extends Component<any, any> {
     force = 0;
     velocityX = 0;
     velocityY = 0;
-    x = 0;
-    y = 0;
+    x = 0.5;
+    y = 0.5;
 
     componentDidUpdate() {
         if (!this.connected && this.props.socket.connected) {
@@ -28,31 +28,20 @@ class Player extends Component<any, any> {
     }
 
     init = () => {
-        this.reset();
         this.timer = setInterval(this.move, 1000 / 30);
+        this.update();
     }
 
-    handleJoystickChange = (amount: number, angle: number) => {
-        // Update values
-        this.angle = angle;
-        this.force = amount;
-        if (angle) {
+    handleJoystickChange = (amount?: number, angle?: number) => {
+        this.angle = angle !== undefined ? angle : this.angle;
+        this.force = amount !== undefined ? amount : this.force;
+        if (angle !== undefined) {
             this.update();
         }
     }
 
     handleShoot = () => {
         console.log('shoot');
-    }
-
-    reset = () => {
-        // Reset values
-        this.angle = 0;
-        this.velocityX = 0;
-        this.velocityY = 0;
-        this.x = 0.5;
-        this.y = 0.5;
-        this.update();
     }
 
     move = () => {
@@ -68,7 +57,7 @@ class Player extends Component<any, any> {
         // Get position
         const x = Math.round(((this.x + this.velocityX + 1) % 1) * 1000) / 1000;
         const y = Math.round(((this.y + this.velocityY + 1) % 1) * 1000) / 1000;
-    
+
         // Update angle and position
         if (this.x != x || this.y != y) {
             this.x = x;
